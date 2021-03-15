@@ -12,6 +12,7 @@ import com.dev777popov.appmvpcicerone.mvp.model.GithubUserRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.UserPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.ui.adapter.UserRVAdapter
+import com.dev777popov.appmvpcicerone.ui.navigation.AndroidScreens
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -22,7 +23,7 @@ class UserFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UserPresenter(GithubUserRepo(), App.instance.router)
+        UserPresenter(GithubUserRepo(), App.instance.router, AndroidScreens())
     }
 
     private var vb: FragmentUsersBinding? = null

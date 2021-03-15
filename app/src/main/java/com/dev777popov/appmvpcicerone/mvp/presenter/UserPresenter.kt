@@ -2,13 +2,15 @@ package com.dev777popov.appmvpcicerone.mvp.presenter
 
 import com.dev777popov.appmvpcicerone.mvp.model.GithubUserRepo
 import com.dev777popov.appmvpcicerone.mvp.model.entity.GithubUser
+import com.dev777popov.appmvpcicerone.mvp.navigation.IScreens
 import com.dev777popov.appmvpcicerone.mvp.presenter.list.IUserListPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
 import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
 import moxy.MvpPresenter
 
-class UserPresenter(val githubUserRepo: GithubUserRepo, val router: Router) :
+class UserPresenter(val githubUserRepo: GithubUserRepo, val router: Router, val screens: IScreens) :
     MvpPresenter<UsersView>() {
 
     class UserListPresenter : IUserListPresenter {
@@ -29,6 +31,11 @@ class UserPresenter(val githubUserRepo: GithubUserRepo, val router: Router) :
         super.onFirstViewAttach()
         viewState.init()
         loadData()
+
+        userListPresenter.itemClickListener = { view ->
+            val user = userListPresenter.users[view.pos]
+            router.navigateTo(screen = screens.user(user.login))
+        }
     }
 
     private fun loadData() {
