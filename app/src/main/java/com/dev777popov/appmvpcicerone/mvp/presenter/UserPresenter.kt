@@ -7,10 +7,16 @@ import com.dev777popov.appmvpcicerone.mvp.presenter.list.IUserListPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
 import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.Screen
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 
-class UserPresenter(val githubUserRepo: GithubUserRepo, val router: Router, val screens: IScreens) :
+class UserPresenter(
+    private val scheduler: Scheduler,
+    private val githubUserRepo: GithubUserRepo,
+    private val router: Router,
+    private val screens: IScreens
+) :
     MvpPresenter<UsersView>() {
 
     class UserListPresenter : IUserListPresenter {
@@ -34,15 +40,23 @@ class UserPresenter(val githubUserRepo: GithubUserRepo, val router: Router, val 
 
         userListPresenter.itemClickListener = { view ->
             val user = userListPresenter.users[view.pos]
-            router.navigateTo(screen = screens.user(user.login))
+            router.navigateTo(screen = screens.user(user))
         }
     }
 
     private fun loadData() {
-        val users = githubUserRepo.getUsers()
-        userListPresenter.users.clear()
-        userListPresenter.users.addAll(users)
-        viewState.updateList()
+        val users = githubUserRepo.create()
+        users.doOnSubscribe {
+            userListPresenter.users.clear()
+        }.subscribeOn(Schedulers.computation())
+            .observeOn(scheduler)
+            .subscribe({ user ->
+                userListPresenter.users.add(user)
+            }, {
+                println("onError: ${it.message}")
+            }, {
+                viewState.updateList()
+            })
     }
 
     fun backClick(): Boolean {

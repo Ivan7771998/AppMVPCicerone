@@ -35,8 +35,5 @@ class UserRVAdapter(private val presenter: UserPresenter.UserListPresenter) :
         }
 
         override var pos: Int = -1
-
     }
-
-
 }

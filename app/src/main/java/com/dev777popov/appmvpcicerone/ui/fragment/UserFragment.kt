@@ -13,6 +13,7 @@ import com.dev777popov.appmvpcicerone.mvp.presenter.UserPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.ui.adapter.UserRVAdapter
 import com.dev777popov.appmvpcicerone.ui.navigation.AndroidScreens
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -23,7 +24,7 @@ class UserFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UserPresenter(GithubUserRepo(), App.instance.router, AndroidScreens())
+        UserPresenter(AndroidSchedulers.mainThread(), GithubUserRepo(), App.instance.router, AndroidScreens())
     }
 
     private var vb: FragmentUsersBinding? = null
@@ -54,6 +55,5 @@ class UserFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     override fun backPressed(): Boolean = presenter.backClick()
-
 
 }

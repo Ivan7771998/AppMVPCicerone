@@ -1,6 +1,7 @@
 package com.dev777popov.appmvpcicerone.mvp.model
 
 import com.dev777popov.appmvpcicerone.mvp.model.entity.GithubUser
+import io.reactivex.rxjava3.core.Observable
 
 class GithubUserRepo {
 
@@ -12,6 +13,18 @@ class GithubUserRepo {
         GithubUser("login5"),
         GithubUser("login6"),
     )
+
+    fun create() = Observable.create<GithubUser> { emitter ->
+        try {
+            val list: List<GithubUser> = users
+            list.forEach {
+                emitter.onNext(it)
+            }
+        } catch (e: Throwable){
+            emitter.onError(e)
+        }
+        emitter.onComplete()
+    }
 
     fun getUsers() = users
 }
