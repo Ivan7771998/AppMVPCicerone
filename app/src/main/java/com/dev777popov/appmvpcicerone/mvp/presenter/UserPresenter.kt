@@ -36,6 +36,7 @@ class UserPresenter(
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         viewState.init()
+
         loadData()
 
         userListPresenter.itemClickListener = { view ->
@@ -46,16 +47,14 @@ class UserPresenter(
 
     private fun loadData() {
         val users = githubUserRepo.create()
-        users.doOnSubscribe {
-            userListPresenter.users.clear()
-        }.subscribeOn(Schedulers.computation())
+        users.subscribeOn(Schedulers.computation())
             .observeOn(scheduler)
             .subscribe({ user ->
-                userListPresenter.users.add(user)
+                userListPresenter.users.clear()
+                userListPresenter.users.addAll(user)
+                viewState.updateList()
             }, {
                 println("onError: ${it.message}")
-            }, {
-                viewState.updateList()
             })
     }
 
