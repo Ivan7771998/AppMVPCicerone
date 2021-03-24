@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">AppMVPCicerone</string>
+    <string name="name_repository">Name repository</string>
+    <string name="description">Description</string>
+    <string name="created">Created</string>
+    <string name="updated">Updated</string>
+    <string name="language">Language</string>
+    <string name="default_branch">Default branch</string>
+    <string name="forks_count">Forks count</string>
+    <string name="watch_count">Watch count</string>
 </resources>

@@ -2,18 +2,20 @@ package com.dev777popov.appmvpcicerone.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.dev777popov.appmvpcicerone.databinding.ItemUserBinding
-import com.dev777popov.appmvpcicerone.mvp.presenter.UserPresenter
+import com.dev777popov.appmvpcicerone.databinding.RvItemUserBinding
+import com.dev777popov.appmvpcicerone.mvp.presenter.UsersPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
+import com.dev777popov.appmvpcicerone.ui.image.IImageLoader
 
-class UserRVAdapter(private val presenter: UserPresenter.UserListPresenter) :
+class UserRVAdapter(private val presenter: UsersPresenter.UsersListPresenter, val imageLoader: IImageLoader<ImageView>) :
     RecyclerView.Adapter<UserRVAdapter.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(
-            ItemUserBinding.inflate(
+            RvItemUserBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -28,10 +30,16 @@ class UserRVAdapter(private val presenter: UserPresenter.UserListPresenter) :
     override fun getItemCount(): Int = presenter.getCount()
 
 
-    inner class ViewHolder(val vb: ItemUserBinding) : RecyclerView.ViewHolder(vb.root),
+    inner class ViewHolder(private val vb: RvItemUserBinding) : RecyclerView.ViewHolder(vb.root),
         IUserItemView {
-        override fun setLogin(login: String) {
-            vb.tvLogin.text = login
+        override fun setLogin(login: String?) {
+            vb.blockUser.tvLogin.text = login
+        }
+
+        override fun loadAvatar(url: String?) {
+            if (url != null) {
+                imageLoader.loadInto(url, vb.blockUser.ivAvatar)
+            }
         }
 
         override var pos: Int = -1
