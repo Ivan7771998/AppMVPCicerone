@@ -4,6 +4,9 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
-interface CurrentUserView: MvpView {
-    fun setLoginText(txtLogin: String)
+interface RepoUserView : MvpView {
+    fun init()
+    fun updateList()
+    fun showProgress()
+    fun hideProgress()
 }

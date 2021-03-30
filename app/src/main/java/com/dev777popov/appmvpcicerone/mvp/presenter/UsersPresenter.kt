@@ -1,37 +1,36 @@
 package com.dev777popov.appmvpcicerone.mvp.presenter
 
-import com.dev777popov.appmvpcicerone.mvp.model.GithubUserRepo
-import com.dev777popov.appmvpcicerone.mvp.model.entity.GithubUser
+import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
+import com.dev777popov.appmvpcicerone.mvp.api.model.GithubUser
 import com.dev777popov.appmvpcicerone.mvp.navigation.IScreens
 import com.dev777popov.appmvpcicerone.mvp.presenter.list.IUserListPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 
-class UserPresenter(
+class UsersPresenter(
     private val scheduler: Scheduler,
-    private val githubUserRepo: GithubUserRepo,
+    private val githubUserRepo: GithubUsersRepo,
     private val router: Router,
     private val screens: IScreens
-) :
-    MvpPresenter<UsersView>() {
+) : MvpPresenter<UsersView>() {
 
-    class UserListPresenter : IUserListPresenter {
+    class UsersListPresenter : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
         override var itemClickListener: ((IUserItemView) -> Unit)? = null
 
         override fun bindView(view: IUserItemView) {
             val user = users[view.pos]
             view.setLogin(user.login)
+            view.loadAvatar(user.avatarUrl)
         }
 
         override fun getCount(): Int = users.size
     }
 
-    val userListPresenter = UserListPresenter()
+    val userListPresenter = UsersListPresenter()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -46,13 +45,14 @@ class UserPresenter(
     }
 
     private fun loadData() {
-        val users = githubUserRepo.create()
-        users.subscribeOn(Schedulers.computation())
+        viewState.showProgress()
+        githubUserRepo.getUsers()
             .observeOn(scheduler)
             .subscribe({ user ->
                 userListPresenter.users.clear()
                 userListPresenter.users.addAll(user)
                 viewState.updateList()
+                viewState.hideProgress()
             }, {
                 println("onError: ${it.message}")
             })
