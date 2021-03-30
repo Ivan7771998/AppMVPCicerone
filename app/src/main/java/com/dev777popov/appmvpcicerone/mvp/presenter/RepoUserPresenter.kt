@@ -53,7 +53,7 @@ class RepoUserPresenter(
     private fun loadData() {
         if (user?.reposUrl != null) {
             viewState.showProgress()
-            githubRepoUserRepo.getRepositoriesUser(user.reposUrl)
+            githubRepoUserRepo.getRepositoriesUser(user)
                 .observeOn(scheduler)
                 .subscribe({ repo ->
                     repoUserRepoPresenter.repoUser.clear()

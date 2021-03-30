@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class RepositoriesUser(
+    @Expose val id: String,
     @Expose val name: String? = null,
     @Expose val forksCount: Int? = null,
     @Expose val owner: Owner? = null,
