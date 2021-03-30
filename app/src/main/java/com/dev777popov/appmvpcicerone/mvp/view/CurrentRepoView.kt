@@ -6,5 +6,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 
 @AddToEndSingle
 interface CurrentRepoView : MvpView {
-    fun init(repo: RepositoriesUser?)
+    fun setMainInfo(name: String?, login: String?, avatar_url: String?, description: String?)
+    fun setDateInfo(createdAt: String?, updatedAt: String?)
+    fun setAdditionalInfo(watchersCount: Int?, forksCount: Int?, language: String?, defaultBranch: String?)
 }

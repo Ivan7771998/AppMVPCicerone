@@ -42,23 +42,37 @@ class CurrentRepoFragment : MvpAppCompatFragment(), CurrentRepoView, BackClickLi
         vb = it
     }.root
 
-    override fun init(repo: RepositoriesUser?) {
+    override fun setMainInfo(
+        name: String?,
+        login: String?,
+        avatar_url: String?,
+        description: String?
+    ) {
         vb?.apply {
-            repo?.apply {
-                val imageLoader: IImageLoader<ImageView> = GlideImageLoader()
-                imageLoader.loadInto(owner?.avatar_url.toString(), blockUser.ivAvatar)
-                blockUser.tvLogin.text = owner?.login
-                repoName.text = name
-                repoDescription.text = description
-                created.text = Helper.getDate(createdAt)
-                updated.text = Helper.getDate(updatedAt)
-                repoLanguage.text = language ?: "-"
-                repoDefaultBranch.text = defaultBranch
-                repoForksCount.text = forksCount.toString()
-                repoWatchCount.text = watchersCount.toString()
-            }
+            val imageLoader: IImageLoader<ImageView> = GlideImageLoader()
+            imageLoader.loadInto(avatar_url.toString(), blockUser.ivAvatar)
+            blockUser.tvLogin.text = login
+            repoName.text = name
+            repoDescription.text = description
         }
     }
+
+    override fun setDateInfo(createdAt: String?, updatedAt: String?) {
+        vb?.apply {
+            created.text = Helper.getDate(createdAt)
+            updated.text = Helper.getDate(updatedAt)
+        }
+    }
+
+    override fun setAdditionalInfo(watchersCount: Int?, forksCount: Int?, language: String?, defaultBranch: String?) {
+        vb?.apply {
+            repoLanguage.text = language ?: "-"
+            repoDefaultBranch.text = defaultBranch
+            repoForksCount.text = forksCount.toString()
+            repoWatchCount.text = watchersCount.toString()
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
