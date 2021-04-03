@@ -24,7 +24,7 @@ class AndroidNetworkStatus(context: Context): INetworkStatus {
             }
 
             override fun onUnavailable() {
-                statusSubject.onNext(true)
+                statusSubject.onNext(false)
             }
 
             override fun onLost(network: Network) {
