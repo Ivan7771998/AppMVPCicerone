@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev777popov.appmvpcicerone.App
 import com.dev777popov.appmvpcicerone.BackClickListener
 import com.dev777popov.appmvpcicerone.databinding.FragmentUsersBinding
 import com.dev777popov.appmvpcicerone.mvp.api.ApiHolder
+import com.dev777popov.appmvpcicerone.mvp.model.cache.RoomImageCache
+import com.dev777popov.appmvpcicerone.mvp.model.cache.СacheRepo
 import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
 import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.UsersPresenter
@@ -31,7 +32,11 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     private val presenter by moxyPresenter {
         UsersPresenter(
             AndroidSchedulers.mainThread(),
-            GithubUsersRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), Database.getInstance()),
+            GithubUsersRepo(
+                ApiHolder.api,
+                AndroidNetworkStatus(requireContext()),
+                СacheRepo(Database.getInstance())
+            ),
             App.instance.router,
             AndroidScreens()
         )
@@ -56,7 +61,12 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
 
     override fun init() {
         vb?.rvUsers?.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = UserRVAdapter(presenter = presenter.userListPresenter, GlideImageLoader())
+        adapter = UserRVAdapter(
+            presenter = presenter.userListPresenter, GlideImageLoader(
+                RoomImageCache(Database.getInstance(), App.instance.cacheDir),
+                AndroidNetworkStatus(requireContext())
+            )
+        )
         vb?.rvUsers?.adapter = adapter
     }
 
@@ -65,7 +75,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     override fun showProgress() {
-       vb?.blockProgress?.progress?.visibility = View.VISIBLE
+        vb?.blockProgress?.progress?.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {

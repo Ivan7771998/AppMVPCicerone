@@ -11,6 +11,7 @@ import com.dev777popov.appmvpcicerone.BackClickListener
 import com.dev777popov.appmvpcicerone.databinding.FragmentRepoUserBinding
 import com.dev777popov.appmvpcicerone.mvp.api.ApiHolder
 import com.dev777popov.appmvpcicerone.mvp.api.model.GithubUser
+import com.dev777popov.appmvpcicerone.mvp.model.cache.СacheRepo
 import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
 import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubRepoUserRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.RepoUserPresenter
@@ -36,7 +37,7 @@ class RepoUserFragment : MvpAppCompatFragment(), RepoUserView, BackClickListener
         RepoUserPresenter(
             AndroidSchedulers.mainThread(),
             arguments?.getParcelable(EXTRA_DATA),
-            GithubRepoUserRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), Database.getInstance()),
+            GithubRepoUserRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), СacheRepo(Database.getInstance())),
             App.instance.router,
             AndroidScreens())
     }

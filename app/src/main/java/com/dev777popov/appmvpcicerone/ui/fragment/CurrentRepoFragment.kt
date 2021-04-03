@@ -10,10 +10,13 @@ import com.dev777popov.appmvpcicerone.App
 import com.dev777popov.appmvpcicerone.BackClickListener
 import com.dev777popov.appmvpcicerone.databinding.FragmentCurrentRepoUserBinding
 import com.dev777popov.appmvpcicerone.mvp.api.model.RepositoriesUser
+import com.dev777popov.appmvpcicerone.mvp.model.cache.RoomImageCache
+import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
 import com.dev777popov.appmvpcicerone.mvp.presenter.CurrentRepoPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.CurrentRepoView
 import com.dev777popov.appmvpcicerone.ui.image.GlideImageLoader
 import com.dev777popov.appmvpcicerone.ui.image.IImageLoader
+import com.dev777popov.appmvpcicerone.ui.network.AndroidNetworkStatus
 import com.dev777popov.appmvpcicerone.util.Helper
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -49,7 +52,10 @@ class CurrentRepoFragment : MvpAppCompatFragment(), CurrentRepoView, BackClickLi
         description: String?
     ) {
         vb?.apply {
-            val imageLoader: IImageLoader<ImageView> = GlideImageLoader()
+            val imageLoader: IImageLoader<ImageView> = GlideImageLoader(
+                RoomImageCache(Database.getInstance(), App.instance.cacheDir),
+                AndroidNetworkStatus(requireContext())
+            )
             imageLoader.loadInto(avatar_url.toString(), blockUser.ivAvatar)
             blockUser.tvLogin.text = login
             repoName.text = name
@@ -64,7 +70,12 @@ class CurrentRepoFragment : MvpAppCompatFragment(), CurrentRepoView, BackClickLi
         }
     }
 
-    override fun setAdditionalInfo(watchersCount: Int?, forksCount: Int?, language: String?, defaultBranch: String?) {
+    override fun setAdditionalInfo(
+        watchersCount: Int?,
+        forksCount: Int?,
+        language: String?,
+        defaultBranch: String?
+    ) {
         vb?.apply {
             repoLanguage.text = language ?: "-"
             repoDefaultBranch.text = defaultBranch
