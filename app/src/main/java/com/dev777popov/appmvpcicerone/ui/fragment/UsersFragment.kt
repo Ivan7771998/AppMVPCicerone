@@ -31,7 +31,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
 
     private val presenter by moxyPresenter {
         UsersPresenter(
-            AndroidSchedulers.mainThread(),
+            AndroidSchedulers.mainThread()
         ).apply {
             App.instance.appComponent.inject(this)
         }

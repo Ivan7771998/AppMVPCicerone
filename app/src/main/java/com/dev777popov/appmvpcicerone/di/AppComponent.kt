@@ -1,13 +1,16 @@
 package com.dev777popov.appmvpcicerone.di
 
 import com.dev777popov.appmvpcicerone.di.module.*
+import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.CurrentRepoPresenter
 import com.dev777popov.appmvpcicerone.mvp.presenter.MainPresenter
 import com.dev777popov.appmvpcicerone.mvp.presenter.RepoUserPresenter
 import com.dev777popov.appmvpcicerone.mvp.presenter.UsersPresenter
 import com.dev777popov.appmvpcicerone.ui.activity.MainActivity
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         AppModule::class,
@@ -24,5 +27,4 @@ interface AppComponent {
     fun inject(usersPresenter: UsersPresenter)
     fun inject(currentRepoPresenter: CurrentRepoPresenter)
     fun inject(repoUserPresenter: RepoUserPresenter)
-
 }

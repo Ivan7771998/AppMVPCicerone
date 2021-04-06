@@ -14,15 +14,18 @@ import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.model.repo.IGithubUsersRepo
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class CacheModule {
 
     @Provides
+    @Singleton
     fun database(app: App) = Room.databaseBuilder(app, Database::class.java, Database.DB_NAME)
         .addMigrations(Migration1_2())
         .build()
 
     @Provides
+    @Singleton
     fun usersCache(db: Database): ICache = СacheRepo(db)
 }

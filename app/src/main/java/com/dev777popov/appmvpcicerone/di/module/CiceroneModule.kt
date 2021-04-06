@@ -8,6 +8,7 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class CiceroneModule {
@@ -21,5 +22,6 @@ class CiceroneModule {
     fun router(): Router = cicerone.router
 
     @Provides
+    @Singleton
     fun screens(): IScreens = AndroidScreens()
 }

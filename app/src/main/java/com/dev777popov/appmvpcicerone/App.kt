@@ -2,7 +2,8 @@ package com.dev777popov.appmvpcicerone
 
 import android.app.Application
 import com.dev777popov.appmvpcicerone.di.AppComponent
-import com.dev777popov.appmvpcicerone.di.module.DaggerAppComponent
+import com.dev777popov.appmvpcicerone.di.DaggerAppComponent
+import com.dev777popov.appmvpcicerone.di.module.AppModule
 import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
 
 class App : Application() {
@@ -18,6 +19,7 @@ class App : Application() {
         instance = this
         Database.create(this)
 
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder()
+            .appModule(AppModule(this)).build()
     }
 }
