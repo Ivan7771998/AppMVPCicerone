@@ -37,9 +37,14 @@ class RepoUserFragment : MvpAppCompatFragment(), RepoUserView, BackClickListener
         RepoUserPresenter(
             AndroidSchedulers.mainThread(),
             arguments?.getParcelable(EXTRA_DATA),
-            GithubRepoUserRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), СacheRepo(Database.getInstance())),
-            App.instance.router,
-            AndroidScreens())
+            GithubRepoUserRepo(
+                ApiHolder.api,
+                AndroidNetworkStatus(requireContext()),
+                СacheRepo(Database.getInstance())
+            )
+        ).apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
     private var vb: FragmentRepoUserBinding? = null

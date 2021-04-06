@@ -32,7 +32,9 @@ class CurrentRepoFragment : MvpAppCompatFragment(), CurrentRepoView, BackClickLi
     }
 
     private val presenter by moxyPresenter {
-        CurrentRepoPresenter(arguments?.getParcelable(EXTRA_DATA_REPO), App.instance.router)
+        CurrentRepoPresenter(arguments?.getParcelable(EXTRA_DATA_REPO)).apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
     private var vb: FragmentCurrentRepoUserBinding? = null

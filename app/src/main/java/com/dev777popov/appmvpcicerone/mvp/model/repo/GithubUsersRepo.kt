@@ -11,8 +11,8 @@ class GithubUsersRepo(
     private val api: IDataSource,
     private val networkStatus: INetworkStatus,
     private val cache: ICache
-) :
-    IGithubUsersRepo {
+) : IGithubUsersRepo {
+
     override fun getUsers(): Single<List<GithubUser>> =
         networkStatus.isOnlineSingle().flatMap { isOnline ->
             if (isOnline) {

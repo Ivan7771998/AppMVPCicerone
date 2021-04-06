@@ -32,14 +32,9 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     private val presenter by moxyPresenter {
         UsersPresenter(
             AndroidSchedulers.mainThread(),
-            GithubUsersRepo(
-                ApiHolder.api,
-                AndroidNetworkStatus(requireContext()),
-                СacheRepo(Database.getInstance())
-            ),
-            App.instance.router,
-            AndroidScreens()
-        )
+        ).apply {
+            App.instance.appComponent.inject(this)
+        }
     }
 
     private var vb: FragmentUsersBinding? = null
