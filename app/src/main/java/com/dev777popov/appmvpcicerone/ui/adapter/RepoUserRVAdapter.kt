@@ -7,7 +7,7 @@ import com.dev777popov.appmvpcicerone.databinding.RvItemRepoBinding
 import com.dev777popov.appmvpcicerone.mvp.presenter.RepoUserPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.list.IRepoUserItemView
 
-class RepoUserRVAdapter(private val presenter: RepoUserPresenter.RepoUserPresenter) :
+class RepoUserRVAdapter(private val presenterInner: RepoUserPresenter.RepoUserPresenterInner) :
     RecyclerView.Adapter<RepoUserRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
@@ -18,13 +18,13 @@ class RepoUserRVAdapter(private val presenter: RepoUserPresenter.RepoUserPresent
                 false
             )
         ).apply {
-            itemView.setOnClickListener { presenter.itemClickListener?.invoke(this) }
+            itemView.setOnClickListener { presenterInner.itemClickListener?.invoke(this) }
         }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
-        presenter.bindView(holder.apply { pos = position })
+        presenterInner.bindView(holder.apply { pos = position })
 
-    override fun getItemCount(): Int = presenter.getCount()
+    override fun getItemCount(): Int = presenterInner.getCount()
 
 
     inner class ViewHolder(private val vb: RvItemRepoBinding) : RecyclerView.ViewHolder(vb.root),

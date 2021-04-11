@@ -2,27 +2,39 @@ package com.dev777popov.appmvpcicerone.mvp.presenter
 
 import com.dev777popov.appmvpcicerone.mvp.api.model.GithubUser
 import com.dev777popov.appmvpcicerone.mvp.api.model.RepositoriesUser
-import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubRepoUserRepo
-import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
+import com.dev777popov.appmvpcicerone.mvp.model.repo.IGithubRepoUserRepo
 import com.dev777popov.appmvpcicerone.mvp.navigation.IScreens
 import com.dev777popov.appmvpcicerone.mvp.presenter.list.IRepoUserListPresenter
-import com.dev777popov.appmvpcicerone.mvp.presenter.list.IUserListPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.RepoUserView
 import com.dev777popov.appmvpcicerone.mvp.view.list.IRepoUserItemView
-import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
+import javax.inject.Inject
+import javax.inject.Named
 
 class RepoUserPresenter(
-    private val scheduler: Scheduler,
     private val user: GithubUser?,
-    private val githubRepoUserRepo: GithubRepoUserRepo,
-    private val router: Router,
-    private val screens: IScreens
 ) : MvpPresenter<RepoUserView>() {
 
-    class RepoUserPresenter : IRepoUserListPresenter {
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var screens: IScreens
+
+    @Inject
+    lateinit var githubRepoUserRepo: IGithubRepoUserRepo
+
+    @field: Named("main")
+    @Inject
+    lateinit var schedulerMain: Scheduler
+
+    @field: Named("io")
+    @Inject
+    lateinit var schedulerIo: Scheduler
+
+    class RepoUserPresenterInner : IRepoUserListPresenter {
 
         val repoUser = mutableListOf<RepositoriesUser>()
 
@@ -36,7 +48,7 @@ class RepoUserPresenter(
         override fun getCount(): Int = repoUser.size
     }
 
-    val repoUserRepoPresenter = RepoUserPresenter()
+    val repoUserRepoPresenter = RepoUserPresenterInner()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -53,8 +65,8 @@ class RepoUserPresenter(
     private fun loadData() {
         if (user?.reposUrl != null) {
             viewState.showProgress()
-            githubRepoUserRepo.getRepositoriesUser(user)
-                .observeOn(scheduler)
+            githubRepoUserRepo.getRepositoriesUser(schedulerIo, user)
+                .observeOn(schedulerMain)
                 .subscribe({ repo ->
                     repoUserRepoPresenter.repoUser.clear()
                     repoUserRepoPresenter.repoUser.addAll(repo)

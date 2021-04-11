@@ -1,7 +1,7 @@
 package com.dev777popov.appmvpcicerone.mvp.presenter
 
-import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.api.model.GithubUser
+import com.dev777popov.appmvpcicerone.mvp.model.repo.IGithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.navigation.IScreens
 import com.dev777popov.appmvpcicerone.mvp.presenter.list.IUserListPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
@@ -9,13 +9,27 @@ import com.dev777popov.appmvpcicerone.mvp.view.list.IUserItemView
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.core.Scheduler
 import moxy.MvpPresenter
+import javax.inject.Inject
+import javax.inject.Named
 
-class UsersPresenter(
-    private val scheduler: Scheduler,
-    private val githubUserRepo: GithubUsersRepo,
-    private val router: Router,
-    private val screens: IScreens
-) : MvpPresenter<UsersView>() {
+class UsersPresenter : MvpPresenter<UsersView>() {
+
+    @Inject
+    lateinit var screens: IScreens
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var githubUserRepo: IGithubUsersRepo
+
+    @field: Named("main")
+    @Inject
+    lateinit var schedulerMain: Scheduler
+
+    @field: Named("io")
+    @Inject
+    lateinit var schedulerIo: Scheduler
 
     class UsersListPresenter : IUserListPresenter {
         val users = mutableListOf<GithubUser>()
@@ -46,8 +60,8 @@ class UsersPresenter(
 
     private fun loadData() {
         viewState.showProgress()
-        githubUserRepo.getUsers()
-            .observeOn(scheduler)
+        githubUserRepo.getUsers(schedulerIo)
+            .observeOn(schedulerMain)
             .subscribe({ user ->
                 userListPresenter.users.clear()
                 userListPresenter.users.addAll(user)
