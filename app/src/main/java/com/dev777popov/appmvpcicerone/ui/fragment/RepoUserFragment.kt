@@ -9,16 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dev777popov.appmvpcicerone.App
 import com.dev777popov.appmvpcicerone.BackClickListener
 import com.dev777popov.appmvpcicerone.databinding.FragmentRepoUserBinding
-import com.dev777popov.appmvpcicerone.mvp.api.ApiHolder
 import com.dev777popov.appmvpcicerone.mvp.api.model.GithubUser
-import com.dev777popov.appmvpcicerone.mvp.model.cache.СacheRepo
-import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
-import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubRepoUserRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.RepoUserPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.RepoUserView
 import com.dev777popov.appmvpcicerone.ui.adapter.RepoUserRVAdapter
-import com.dev777popov.appmvpcicerone.ui.navigation.AndroidScreens
-import com.dev777popov.appmvpcicerone.ui.network.AndroidNetworkStatus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -35,13 +29,7 @@ class RepoUserFragment : MvpAppCompatFragment(), RepoUserView, BackClickListener
 
     private val presenter by moxyPresenter {
         RepoUserPresenter(
-            AndroidSchedulers.mainThread(),
             arguments?.getParcelable(EXTRA_DATA),
-            GithubRepoUserRepo(
-                ApiHolder.api,
-                AndroidNetworkStatus(requireContext()),
-                СacheRepo(Database.getInstance())
-            )
         ).apply {
             App.instance.appComponent.inject(this)
         }
@@ -60,7 +48,7 @@ class RepoUserFragment : MvpAppCompatFragment(), RepoUserView, BackClickListener
 
     override fun init() {
         vb?.rvUserRepo?.layoutManager = LinearLayoutManager(requireContext())
-        adapter = RepoUserRVAdapter(presenter = presenter.repoUserRepoPresenter)
+        adapter = RepoUserRVAdapter(presenter.repoUserRepoPresenter)
         vb?.rvUserRepo?.adapter = adapter
     }
 

@@ -8,18 +8,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.dev777popov.appmvpcicerone.App
 import com.dev777popov.appmvpcicerone.BackClickListener
 import com.dev777popov.appmvpcicerone.databinding.FragmentUsersBinding
-import com.dev777popov.appmvpcicerone.mvp.api.ApiHolder
 import com.dev777popov.appmvpcicerone.mvp.model.cache.RoomImageCache
-import com.dev777popov.appmvpcicerone.mvp.model.cache.СacheRepo
 import com.dev777popov.appmvpcicerone.mvp.model.entity.room.db.Database
-import com.dev777popov.appmvpcicerone.mvp.model.repo.GithubUsersRepo
 import com.dev777popov.appmvpcicerone.mvp.presenter.UsersPresenter
 import com.dev777popov.appmvpcicerone.mvp.view.UsersView
 import com.dev777popov.appmvpcicerone.ui.adapter.UserRVAdapter
 import com.dev777popov.appmvpcicerone.ui.image.GlideImageLoader
-import com.dev777popov.appmvpcicerone.ui.navigation.AndroidScreens
 import com.dev777popov.appmvpcicerone.ui.network.AndroidNetworkStatus
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -30,9 +25,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     }
 
     private val presenter by moxyPresenter {
-        UsersPresenter(
-            AndroidSchedulers.mainThread()
-        ).apply {
+        UsersPresenter().apply {
             App.instance.appComponent.inject(this)
         }
     }
@@ -57,11 +50,10 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackClickListener {
     override fun init() {
         vb?.rvUsers?.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = UserRVAdapter(
-            presenter = presenter.userListPresenter, GlideImageLoader(
-                RoomImageCache(Database.getInstance(), App.instance.cacheDir),
-                AndroidNetworkStatus(requireContext())
-            )
-        )
+            presenter = presenter.userListPresenter
+        ).apply {
+            App.instance.appComponent.inject(this)
+        }
         vb?.rvUsers?.adapter = adapter
     }
 
